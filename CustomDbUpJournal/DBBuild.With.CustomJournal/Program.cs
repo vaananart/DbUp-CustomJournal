@@ -2,6 +2,7 @@
 using DBBuild.With.CustomJournal.CustomSupport;
 
 using DbUp;
+using DbUp.Engine;
 using DbUp.SqlServer;
 
 using Microsoft.Extensions.Configuration;
@@ -23,11 +24,27 @@ try
 
 		var parsedConnectionString = connectionString.Replace("{{DATABASENAME}}", configElement.Value);
 
+		var sqlScriptOptions = new SqlScriptOptions();
+		sqlScriptOptions.ScriptType = DbUp.Support.ScriptType.RunAlways;
+
 		var dbBuilder = DeployChanges.To.SqlDatabase(parsedConnectionString)
-				.WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly(), (string s) => s.Contains(configElement.Value))
+				.WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly(), (string s) => s.Contains(configElement.Value), sqlScriptOptions)
 				.JournalToSqlTable("dbo", "SchemaVersions")
 				.LogToConsole();
 
+		dbBuilder.Configure(
+			c =>
+			{
+				c.Journal = new InheritedDeploymentTrackJornal(
+					() => c.ConnectionManager,
+					() => c.Log,
+					new SqlServerObjectParser(),
+					"",
+					"SchemaVersions"
+				);
+			
+			}
+		);
 		var test = dbBuilder.Build();
 				
 

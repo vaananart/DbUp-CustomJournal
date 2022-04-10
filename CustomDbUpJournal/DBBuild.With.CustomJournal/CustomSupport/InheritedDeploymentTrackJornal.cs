@@ -3,12 +3,6 @@ using DbUp.Engine.Output;
 using DbUp.Engine.Transactions;
 using DbUp.Support;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace DBBuild.With.CustomJournal.CustomSupport
 {
 	public class InheritedDeploymentTrackJornal : TableJournal
@@ -44,8 +38,17 @@ namespace DBBuild.With.CustomJournal.CustomSupport
 		protected override string GetInsertJournalEntrySql(string scriptName, string applied)
 		{
 			var result = @$"
-						INSERT INTO [dbo].[SchemaVersions] (ScriptName, Applied) 
-						VALUES ({scriptName}, {applied});
+						IF EXISTS(SELECT 1 FROM [dbo].[SchemaVersions] WHERE ScriptName = {scriptName})
+						BEGIN
+							UPDATE [dbo].[SchemaVersions]
+							SET Applied = {applied} 
+							WHERE ScriptName = {scriptName} 
+						END
+						ELSE
+						BEGIN
+							INSERT INTO [dbo].[SchemaVersions] (ScriptName, Applied) 
+							VALUES ({scriptName}, {applied});
+						END
 
 						INSERT INTO [dbo].[HistoricalDates](SchemaVersionsId, DeploymentDate)
 						SELECT Id, Applied
