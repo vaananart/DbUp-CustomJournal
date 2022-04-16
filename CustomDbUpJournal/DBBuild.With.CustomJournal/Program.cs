@@ -29,26 +29,27 @@ try
 
 		var dbBuilder = DeployChanges.To.SqlDatabase(parsedConnectionString)
 				.WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly(), (string s) => s.Contains(configElement.Value), sqlScriptOptions)
-				.JournalToSqlTable("dbo", "SchemaVersions")
+				//.JournalToSqlTable("dbo", "SchemaVersions")
+				.JournalTo(new DetailedDeploymentTrackJournal(parsedConnectionString))
 				.LogToConsole();
 
-		dbBuilder.Configure(
-			c =>
-			{
-				c.Journal = new InheritedDeploymentTrackJornal(
-					() => c.ConnectionManager,
-					() => c.Log,
-					new SqlServerObjectParser(),
-					"",
-					"SchemaVersions"
-				);
+		//dbBuilder.Configure(
+		//	c =>
+		//	{
+		//		c.Journal = new InheritedDeploymentTrackJornal(
+		//			() => c.ConnectionManager,
+		//			() => c.Log,
+		//			new SqlServerObjectParser(),
+		//			"",
+		//			"SchemaVersions"
+		//		);
 			
-			}
-		);
+		//	}
+		//);
 		var test = dbBuilder.Build();
 				
 
-		var scripts = test.GetScriptsToExecute();
+		//var scripts = test.GetScriptsToExecute();
 
 		var result = test.PerformUpgrade();
 		if (result.Successful)
