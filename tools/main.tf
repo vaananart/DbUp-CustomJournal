@@ -45,6 +45,13 @@ resource "azurerm_mssql_database" "dbup-demo-test" {
 
 }
 
+resource "azurerm_mssql_firewall_rule" "dbup-demo-firewall-rule" {
+  name                = "dbup_demo_firewall_rule"
+  server_id         = azurerm_mssql_server.dbup-demo.id
+  start_ip_address    = "<your public ip address>"
+  end_ip_address      = "<your public ip address>"
+}
+
 variable "resource_group_name_prefix" {
   default = "rg"
 

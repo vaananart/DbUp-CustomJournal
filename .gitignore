@@ -352,3 +352,6 @@ MigrationBackup/
 .idea/
 **/.terraform/
 **/.terraform.lock.hcl
+**/*.tfplan
+**/*.tfstate
+**/*.tfstate.*
