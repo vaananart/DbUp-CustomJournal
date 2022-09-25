@@ -1,9 +1,8 @@
-﻿using DbUp.Engine;
-
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
+using DbUp.Engine;
 
-namespace DBBuild.With.CustomJournal.CustomSupport
+namespace CustomDbUpJournalDemo.CustomJournals
 {
 	public class DetailedDeploymentTrackJournal : IJournal
 	{
