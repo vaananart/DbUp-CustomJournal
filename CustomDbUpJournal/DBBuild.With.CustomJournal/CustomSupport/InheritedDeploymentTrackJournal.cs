@@ -5,9 +5,9 @@ using DbUp.Support;
 
 namespace DBBuild.With.CustomJournal.CustomSupport
 {
-	public class InheritedDeploymentTrackJornal : TableJournal
+	public class InheritedDeploymentTrackJournal : TableJournal
 	{
-		public InheritedDeploymentTrackJornal(Func<IConnectionManager> connectionManager, Func<IUpgradeLog> logger, ISqlObjectParser sqlObjectParser, string schema, string table) : base(connectionManager, logger, sqlObjectParser, schema, table)
+		public InheritedDeploymentTrackJournal(Func<IConnectionManager> connectionManager, Func<IUpgradeLog> logger, ISqlObjectParser sqlObjectParser, string schema, string table) : base(connectionManager, logger, sqlObjectParser, schema, table)
 		{
 		}
 

@@ -15,7 +15,7 @@ namespace DBBuild.With.CustomJournal.CustomSupport
 		}
 		public void EnsureTableExistsAndIsLatestVersion(Func<IDbCommand> dbCommandFactory)
 		{
-			string schemaInformationQuery = "SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'SchemaVersions' AND TABLE_SCHEMA = 'dbo'";
+			var schemaInformationQuery = "SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'SchemaVersions' AND TABLE_SCHEMA = 'dbo'";
 			using var command = dbCommandFactory();
 			command.CommandText = schemaInformationQuery;
 			command.CommandType	= CommandType.Text;

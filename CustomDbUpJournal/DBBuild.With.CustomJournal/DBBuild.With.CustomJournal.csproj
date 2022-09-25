@@ -5,18 +5,13 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <LangVersion>?</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="DbScripts\AccountingDB\001_Table_Creation.sql" />
     <None Remove="DbScripts\SchoolManagementDB\002_Table_Creation.sql" />
     <None Remove="JournalTableCreationScripts\TablesCreation.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="DbScripts\AccountingDB\001_Table_Creation.sql" />
-    <EmbeddedResource Include="DbScripts\SchoolManagementDB\002_Table_Creation.sql" />
-    <EmbeddedResource Include="JournalTableCreationScripts\TablesCreation.sql" />
   </ItemGroup>
 
   <ItemGroup>

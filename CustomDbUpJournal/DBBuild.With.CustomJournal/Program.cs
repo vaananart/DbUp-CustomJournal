@@ -3,7 +3,7 @@ using DBBuild.With.CustomJournal.CustomSupport;
 
 using DbUp;
 using DbUp.Engine;
-using DbUp.SqlServer;
+//using DbUp.SqlServer;
 
 using Microsoft.Extensions.Configuration;
 
@@ -36,7 +36,7 @@ try
 		//dbBuilder.Configure(
 		//	c =>
 		//	{
-		//		c.Journal = new InheritedDeploymentTrackJornal(
+		//		c.Journal = new InheritedDeploymentTrackJournal(
 		//			() => c.ConnectionManager,
 		//			() => c.Log,
 		//			new SqlServerObjectParser(),
@@ -52,14 +52,7 @@ try
 		//var scripts = test.GetScriptsToExecute();
 
 		var result = test.PerformUpgrade();
-		if (result.Successful)
-		{
-			Console.WriteLine("Upgrade is performed successfully");
-		}
-		else
-		{
-			Console.WriteLine("Upgrade has failed");
-		}
+		Console.WriteLine(result.Successful ? "Upgrade is performed successfully" : "Upgrade has failed");
 	}
 }
 catch (Exception ex)
