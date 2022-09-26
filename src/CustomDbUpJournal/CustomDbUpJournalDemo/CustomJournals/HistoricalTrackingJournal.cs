@@ -4,17 +4,17 @@ using DbUp.Engine;
 
 namespace CustomDbUpJournalDemo.CustomJournals
 {
-	public class DetailedDeploymentTrackJournal : IJournal
+	public class HistoricalTrackingJournal : IJournal
 	{
 		private readonly string _connectionString;
 
-		public DetailedDeploymentTrackJournal(string connectionString)
+		public HistoricalTrackingJournal(string connectionString)
 		{
 			_connectionString = connectionString;
 		}
 		public void EnsureTableExistsAndIsLatestVersion(Func<IDbCommand> dbCommandFactory)
 		{
-			var schemaInformationQuery = "SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'SchemaVersions' AND TABLE_SCHEMA = 'dbo'";
+			var schemaInformationQuery = "SELECT 1 FROM [DbUpDatabase].INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'SchemaVersions' AND TABLE_SCHEMA = 'dbo'";
 			using var command = dbCommandFactory();
 			command.CommandText = schemaInformationQuery;
 			command.CommandType	= CommandType.Text;
@@ -22,23 +22,23 @@ namespace CustomDbUpJournalDemo.CustomJournals
 
 			if (reader == null)
 			{
-				string tableCreationSQL = @"CREATE TABLE SchemaVersions (
+				string tableCreationSQL = @"CREATE TABLE [DbUpDatabase].SchemaVersions (
 						[Id] INT IDENTITY(1,1) NOT NULL
 						, [ScriptName] NVARCHAR(255) NOT NULL
 						, [Applied] DATETIME NOT NULL
 						, CONSTRAINT pk_SchemaVersions_Id PRIMARY KEY NONCLUSTERED (Id)
 						)
-					CREATE TABLE HistoricalDates(
+					CREATE TABLE [DbUpDatabase].HistoricalDates(
 						[Id] INT IDENTITY(1,1) NOT NULL
 						, SchemaVersionsId INT not null
 						, DeploymentDate DATETIME NOT NULL
 						, CONSTRAINT pk_HistoricalDates_Id PRIMARY KEY NONCLUSTERED (Id)
 					)
 
-					ALTER TABLE HistoricalDates
+					ALTER TABLE [DbUpDatabase].HistoricalDates
 					ADD CONSTRAINT FK_SchemaVersions_SchmaVersionsId
 					FOREIGN KEY (SchemaVersionsId)
-					REFERENCES SchemaVersions (Id)
+					REFERENCES [DbUpDatabase].SchemaVersions (Id)
 					ON DELETE CASCADE
 					ON UPDATE CASCADE;
 					";
@@ -53,7 +53,7 @@ namespace CustomDbUpJournalDemo.CustomJournals
 		public string[] GetExecutedScripts()
 		{
 
-			string schemaInformationQuery = "SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'SchemaVersions' AND TABLE_SCHEMA = 'dbo'";
+			string schemaInformationQuery = "SELECT 1 FROM [DbUpDatabase].INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'SchemaVersions' AND TABLE_SCHEMA = 'dbo'";
 			using SqlConnection checkingConnection = new SqlConnection(_connectionString);
 			checkingConnection.Open();
 			using SqlCommand checkingCommand = new SqlCommand(schemaInformationQuery, checkingConnection);
@@ -67,7 +67,7 @@ namespace CustomDbUpJournalDemo.CustomJournals
 				return Array.Empty<string>();
 			}
 
-			string queryString = "SELECT ScriptName FROM [dbo].[SchemaVersions]";
+			string queryString = "SELECT ScriptName FROM [DbUpDatabase].[SchemaVersions]";
 
 			var result = new List<string>();
 
@@ -87,21 +87,21 @@ namespace CustomDbUpJournalDemo.CustomJournals
 		public void StoreExecutedScript(SqlScript script, Func<IDbCommand> dbCommandFactory)
 		{
 			string insertionSQL = @$"
-						IF EXISTS(SELECT 1 FROM [dbo].[SchemaVersions] WHERE ScriptName = @scriptName)
+						IF EXISTS(SELECT 1 FROM [DbUpDatabase].[SchemaVersions] WHERE ScriptName = @scriptName)
 						BEGIN
-							UPDATE [dbo].[SchemaVersions]
+							UPDATE [DbUpDatabase].[SchemaVersions]
 							SET Applied = @applied
 							WHERE ScriptName = @scriptName 
 						END
 						ELSE
 						BEGIN
-							INSERT INTO [dbo].[SchemaVersions] (ScriptName, Applied) 
+							INSERT INTO [DbUpDatabase].[SchemaVersions] (ScriptName, Applied) 
 							VALUES (@scriptName, @applied);
 						END
 
-						INSERT INTO [dbo].[HistoricalDates](SchemaVersionsId, DeploymentDate)
+						INSERT INTO [DbUpDatabase].[HistoricalDates](SchemaVersionsId, DeploymentDate)
 						SELECT Id, Applied
-						FROM [dbo].[SchemaVersions]
+						FROM [DbUpDatabase].[SchemaVersions]
 						WHERE ScriptName = @scriptName
 						AND Applied = @applied
 					";

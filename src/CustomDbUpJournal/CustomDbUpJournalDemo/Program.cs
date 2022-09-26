@@ -61,7 +61,7 @@ class Program
 				sqlScriptOptions.ScriptType = DbUp.Support.ScriptType.RunAlways;
 				var dbBuilder = DeployChanges.To.SqlDatabase(parsedConnectionString)
 					.WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly(), (string s) => s.Contains(configElement.Value), sqlScriptOptions)
-					.JournalTo(new DetailedDeploymentTrackJournal(parsedConnectionString))
+					.JournalTo(new HistoricalTrackingJournal(parsedConnectionString))
 					.LogToConsole();
 				var test = dbBuilder.Build();
 

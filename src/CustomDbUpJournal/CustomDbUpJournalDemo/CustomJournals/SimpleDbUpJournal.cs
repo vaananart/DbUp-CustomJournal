@@ -4,11 +4,11 @@ using DbUp.SqlServer;
 
 namespace CustomDbUpJournalDemo.CustomJournals;
 
-public class InheritedCommonDbUpJournal: SqlTableJournal
+public class SimpleDbUpJournal: SqlTableJournal
 {
     private readonly string FQCatalogedSchemaTableName;
 
-    public InheritedCommonDbUpJournal(Func<IConnectionManager> connectionManager
+    public SimpleDbUpJournal(Func<IConnectionManager> connectionManager
             , Func<IUpgradeLog> logger
             , string catalog
             , string schema
