@@ -2,7 +2,7 @@
   "profiles": {
     "CustomDbUpJournalDemo": {
       "commandName": "Project",
-      "commandLineArgs": "--mode=docker"
+      "commandLineArgs": ""
     }
   }
 }
