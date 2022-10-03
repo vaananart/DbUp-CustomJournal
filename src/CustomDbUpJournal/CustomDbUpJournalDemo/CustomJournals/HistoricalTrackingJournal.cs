@@ -39,10 +39,10 @@ namespace CustomDbUpJournalDemo.CustomJournals
 						, CONSTRAINT pk_HistoricalDates_Id PRIMARY KEY NONCLUSTERED (Id)
 					)
 
-					ALTER TABLE HistoricalDates
+					ALTER TABLE [DbUpDatabase].[dbo].HistoricalDates
 					ADD CONSTRAINT FK_SchemaVersions_SchmaVersionsId
 					FOREIGN KEY (SchemaVersionsId)
-					REFERENCES [DbUpDatabase].SchemaVersions (Id)
+					REFERENCES [DbUpDatabase].[dbo].SchemaVersions (Id)
 					ON DELETE CASCADE
 					ON UPDATE CASCADE;
 					";
